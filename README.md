@@ -11,14 +11,11 @@ npm i
 npm start
 or
 docker-compose up -d
-```
 
-These are all environment variables and their default values:
-```
-INFLUX_HOST || "localhost";
-INFLUX_PORT || "8086";
-INFLUX_DB || "hs110";
-INFLUX_USERNAME || "root";
-INFLUX_PASSWORD || "root";
-INTERVAL_MS || 10000;
-```
+## These are all environment variables and their default values:
+> INFLUX_HOST || "localhost";
+> INFLUX_PORT || "8086";
+> INFLUX_DB || "hs110";
+> INFLUX_USERNAME || "root";
+> INFLUX_PASSWORD || "root";
+> INTERVAL_MS || 10000;
