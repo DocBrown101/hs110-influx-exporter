@@ -1,0 +1,17 @@
+version: "2.4"
+
+services:
+  hs110-exporter:
+    build: ./
+    container_name: 9-hs110-influx-exporter
+    network_mode: host
+    restart: on-failure:5
+    environment:
+      INFLUX_DB: "hs110"
+      INFLUX_HOST: "192.168.0.220"
+      INFLUX_PORT: "8086"
+      INTERVAL_MS: "10000"
+    cpu_shares: 10
+    pids_limit: 20
+    mem_limit: 100m
+    read_only: true

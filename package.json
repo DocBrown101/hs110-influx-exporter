@@ -1,0 +1,22 @@
+{
+  "name": "hs110-influx-exporter",
+  "version": "1.0.0",
+  "description": "Tp-link hs110 influxdb exporter",
+  "main": "app.js",
+  "scripts": {
+    "start": "node -r esm src/app.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/DocBrown101/hs110-influx-exporter.git"
+  },
+  "private": true,
+  "type": "commonjs",
+  "dependencies": {
+    "better-logging": "^4.5.0",
+    "os": "^0.1.1",
+    "esm": "^3.2.25",
+    "influx": "^5.9.2",
+    "tplink-smarthome-api": "^3.3.0"
+  }
+}
