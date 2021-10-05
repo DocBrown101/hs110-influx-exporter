@@ -1,6 +1,6 @@
 {
   "name": "hs110-influx-exporter",
-  "version": "1.0.0",
+  "version": "1.1.0",
   "description": "Tp-link hs110 influxdb exporter",
   "main": "app.js",
   "scripts": {

@@ -20,19 +20,19 @@ class TplinkClient {
     device.getSysInfo().then(sysInfo => {
       console.info("device found: " + sysInfo.alias, sysInfo);
       setInterval(() => {
-        this.queryRealtimeMetric(device)
-          .then(realtimeMetric => this.cleanUpRealtimeMetric(realtimeMetric))
-          .then(realtimeMetric => this.influxClient.sendMetrics(realtimeMetric, sysInfo));
+        try {
+          this.queryRealtimeMetric(device)
+            .then(realtimeMetric => this.cleanUpRealtimeMetric(realtimeMetric))
+            .then(realtimeMetric => this.influxClient.sendMetrics(realtimeMetric, sysInfo));
+        }
+        catch (e) {
+          console.error(e);
+        }
       }, this.intervalInMilliseconds);
     });
   }
 
   queryRealtimeMetric(device) {
-    // TODO
-    /* device.emeter.getMonthStats(2021).then(currentPeriodStats => {
-      console.warn("XXX: ", currentPeriodStats);
-    }); */
-
     return device.emeter.getRealtime();
   }
 
