@@ -33,27 +33,32 @@ class InfluxClient {
       if (!names.includes(this.config.influxDatabase)) {
         try {
           console.log("No database found, try to create ...");
-          return this.influxDB.createDatabase(this.config.influxDatabase);
+          await this.influxDB.createDatabase(this.config.influxDatabase);
         } catch (err) {
-          console.error("Error creating Influx database!");
+          console.error(this.constructor.name, "Error creating Influx database!");
         }
       }
     } catch (err) {
-      console.error("Connection to the influx database could not be established!");
+      console.error(this.constructor.name, "Connection to the influx database could not be established!");
     }
   }
 
-  sendMetrics(metrics, sysInfo) {
-    this.influxDB.writePoints([
-      {
-        measurement: "power_consumption",
-        tags: {
-          host: this.config.hostname,
-          alias: sysInfo.alias
-        },
-        fields: metrics,
-      }
-    ]);
+  async sendMetrics(metrics, sysInfo) {
+    try {
+      await this.influxDB.writePoints([
+        {
+          measurement: "power_consumption",
+          tags: {
+            host: this.config.hostname,
+            alias: sysInfo.alias
+          },
+          fields: metrics,
+        }
+      ]);
+    }
+    catch (e) {
+      console.error(this.constructor.name, e);
+    }
   }
 }
 

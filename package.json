@@ -13,10 +13,10 @@
   "private": true,
   "type": "commonjs",
   "dependencies": {
-    "better-logging": "^4.5.0",
-    "os": "^0.1.1",
+    "better-logging": "^4.5.1",
     "esm": "^3.2.25",
     "influx": "^5.9.2",
+    "os": "^0.1.2",
     "tplink-smarthome-api": "^3.3.0"
   }
 }

@@ -10,15 +10,17 @@ class TplinkClient {
     this.tplinkApi = new Client();
   }
 
-  startCollectingMetrics() {
-    this.influxClient.checkDatabase()
-      .then(() => this.tplinkApi.startDiscovery()
-        .on('device-new', dev => this.deviceFound(dev)));
+  async startCollectingMetrics() {
+    await this.influxClient.checkDatabase();
+
+    this.tplinkApi.startDiscovery().on('device-new', device => this.deviceFound(device));
+
+    // console.info("test");
   }
 
   deviceFound(device) {
     device.getSysInfo().then(sysInfo => {
-      console.info("device found: " + sysInfo.alias, sysInfo);
+      console.info("device found: " + sysInfo.alias + " - rssi: " + sysInfo.rssi);
       setInterval(() => {
         try {
           this.queryRealtimeMetric(device)
@@ -26,7 +28,7 @@ class TplinkClient {
             .then(realtimeMetric => this.influxClient.sendMetrics(realtimeMetric, sysInfo));
         }
         catch (e) {
-          console.error(e);
+          console.error(this.constructor.name, e);
         }
       }, this.intervalInMilliseconds);
     });

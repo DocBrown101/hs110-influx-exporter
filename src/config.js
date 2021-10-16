@@ -20,7 +20,7 @@ class Config {
     console.info("intervalInMilliseconds: ", this.intervalInMilliseconds);
     console.info("isDebug: ", this.isDebug);
     console.info("- Setting -");
-    console.info("Version: 1.1.0");
+    console.info("Version: 1.2.0");
   }
 }
 
