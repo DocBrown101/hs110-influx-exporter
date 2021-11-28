@@ -13,9 +13,10 @@
   "private": true,
   "type": "commonjs",
   "dependencies": {
-    "better-logging": "^4.5.1",
+    "@influxdata/influxdb-client": "^1.21.0",
+    "@influxdata/influxdb-client-apis": "^1.21.0",
+    "better-logging": "^4.6.0",
     "esm": "^3.2.25",
-    "influx": "^5.9.2",
     "os": "^0.1.2",
     "tplink-smarthome-api": "^3.3.0"
   }

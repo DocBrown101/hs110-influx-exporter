@@ -11,7 +11,7 @@ class TplinkClient {
   }
 
   async startCollectingMetrics() {
-    await this.influxClient.checkDatabase();
+    await this.influxClient.checkingDatabaseConnectionWithPing();
 
     this.tplinkApi.startDiscovery().on('device-new', device => this.deviceFound(device));
   }
@@ -21,20 +21,10 @@ class TplinkClient {
       console.info("device found: " + sysInfo.alias + " - rssi: " + sysInfo.rssi);
       setInterval(() => {
         device.emeter.getRealtime()
-          .then(realtimeMetric => this.cleanUpRealtimeMetric(realtimeMetric))
           .then(realtimeMetric => this.influxClient.sendMetrics(realtimeMetric, sysInfo))
           .catch(err => console.error(this.constructor.name, err));
       }, this.intervalInMilliseconds);
     });
-  }
-
-  cleanUpRealtimeMetric(raw) {
-    delete raw.err_code;
-    delete raw.current_ma;
-    delete raw.power_mw;
-    delete raw.total_wh;
-    delete raw.voltage_mv;
-    return raw;
   }
 }
 

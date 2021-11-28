@@ -1,63 +1,53 @@
-import {InfluxDB, FieldType} from 'influx';
+import {InfluxDB, Point} from '@influxdata/influxdb-client';
+import {PingAPI} from '@influxdata/influxdb-client-apis';
+
+const timeout = 10 * 1000; // timeout for ping
+var flushCounter = 0;
 
 class InfluxClient {
   constructor(config) {
+    const url = `http://${config.influxHost}:${config.influxHostPort}`;
+    const bucket = config.influxDatabase;
+
     this.config = config;
-    this.influxDB = new InfluxDB({
-      host: config.influxHost,
-      port: config.influxHostPort,
-      database: config.influxDatabase,
-      username: config.influxUsername,
-      password: config.influxPassword,
-      schema: [
-        {
-          measurement: "power_consumption",
-          tags: [
-            "host", "alias"
-          ],
-          fields: {
-            current: FieldType.FLOAT,
-            voltage: FieldType.FLOAT,
-            total: FieldType.FLOAT,
-            power: FieldType.FLOAT,
-          }
-        }
-      ]
-    });
+    this.influxDB = new InfluxDB({url, timeout});
+    this.writeApi = this.influxDB.getWriteApi('home', bucket, 'ms');
+    this.writeApi.useDefaultTags({host: this.config.hostname});
   }
 
-  async checkDatabase() {
-    console.log("Check influx database ...");
-    try {
-      const names = await this.influxDB.getDatabaseNames();
-      if (!names.includes(this.config.influxDatabase)) {
-        try {
-          console.log("No database found, try to create ...");
-          await this.influxDB.createDatabase(this.config.influxDatabase);
-        } catch (err) {
-          console.error(this.constructor.name, "Error creating Influx database!");
-        }
-      }
-    } catch (err) {
-      console.error(this.constructor.name, "Connection to the influx database could not be established!");
-    }
+  async checkingDatabaseConnectionWithPing() {
+    console.log("Check influxdb connection ...");
+    const pingAPI = new PingAPI(this.influxDB);
+
+    await pingAPI.getPing()
+      .then(() => {
+        console.log('Ping SUCCESS');
+      })
+      .catch(error => {
+        console.error(error);
+        console.error(this.constructor.name, "Connection to the influxdb could not be established!");
+      });
   }
 
   async sendMetrics(metrics, sysInfo) {
-    try {
-      await this.influxDB.writePoints([
-        {
-          measurement: "power_consumption",
-          tags: {
-            host: this.config.hostname,
-            alias: sysInfo.alias
-          },
-          fields: metrics,
-        }
-      ]);
-    }
-    catch (e) {
-      console.error(this.constructor.name, e);
+    const point = new Point('power_consumption')
+      .tag('alias', sysInfo.alias)
+      .floatField('current', metrics.current)
+      .floatField('voltage', metrics.voltage)
+      .floatField('total', metrics.total)
+      .floatField('power', metrics.power);
+    this.writeApi.writePoint(point);
+
+    if (++flushCounter >= 3) {
+      flushCounter = 0;
+
+      await this.writeApi.flush()
+        .then(() => {
+          console.debug('FLUSH FINISHED');
+        })
+        .catch(e => {
+          console.error(this.constructor.name, e);
+        });
     }
   }
 }
