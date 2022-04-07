@@ -19,5 +19,10 @@
     "esm": "^3.2.25",
     "os": "^0.1.2",
     "tplink-smarthome-api": "^3.3.0"
+  },
+  "devDependencies": {
+    "babel-eslint": "^10.1.0",
+    "eslint": "^8.12.0",
+    "eslint-plugin-import": "^2.20.2"
   }
 }
